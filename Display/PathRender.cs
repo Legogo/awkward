@@ -6,14 +6,15 @@ using System.Collections;
 /// Path render.
 /// Created by André Berlemont
 /// 
-/// This script will create some lines between points of a path
+/// This script will create some lines (made from native quads) between points (vector3) of a path
 /// </summary>
 
 public class PathRender : MonoBehaviour {
 
   public Texture tex; // texture to scroll on surface
-  public bool closePath = false;
-
+  public bool closePath = false; // will close the path (connection btw last point & first point)
+  public bool isStatic = true; // will regenerate path at each frame
+ 
   GameObject[] quads;
   public Vector3[] nodes;
 
@@ -22,11 +23,6 @@ public class PathRender : MonoBehaviour {
 
     checkQuads();
     updatePath();
-    
-    //if no texture > no animation
-    if(tex == null){
-      enabled = false;
-    }
 
   }
 
@@ -49,7 +45,6 @@ public class PathRender : MonoBehaviour {
 
     //hide unused
     for (int i = 0; i < quads.Length; i++) {
-      GameObject q = quads[i];
       int maxQuad = (closePath) ? nodes.Length : nodes.Length-1;
       if(i >= maxQuad)  quads[i].gameObject.SetActive(false);
       else quads[i].gameObject.SetActive(true);
@@ -62,7 +57,7 @@ public class PathRender : MonoBehaviour {
     updatePath();
   }
 
-  public void updatePath(){
+  void updatePath(){
     for (int i = 0; i < nodes.Length; i++) {
       GameObject q = quads[i];
 
@@ -108,13 +103,17 @@ public class PathRender : MonoBehaviour {
   }
 
   void Update () {
-    
-    //update scrolling animation
-    for (int i = 0; i < quads.Length; i++) {
-      Vector2 offset = quads[i].renderer.material.GetTextureOffset("_MainTex");
-      offset.x -= Time.deltaTime * 1f;
-      quads[i].renderer.material.SetTextureOffset("_MainTex", offset);
+
+    //update scrolling animation if texture exist
+    if(tex != null){
+      for (int i = 0; i < quads.Length; i++) {
+        Vector2 offset = quads[i].renderer.material.GetTextureOffset("_MainTex");
+        offset.x -= Time.deltaTime * 1f;
+        quads[i].renderer.material.SetTextureOffset("_MainTex", offset);
+      }
     }
+
+    if(!isStatic) updatePath();
   }
 
   void OnDrawGizmos(){
