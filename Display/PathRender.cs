@@ -2,18 +2,63 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Path render.
+/// Created by André Berlemont
+/// 
+/// This script will create some lines between points of a path
+/// </summary>
+
 public class PathRender : MonoBehaviour {
 
-  public Texture tex;
+  public Texture tex; // texture to scroll on surface
+  public bool closePath = false;
+
   GameObject[] quads;
   public Vector3[] nodes;
 
   void Start () {
-    quads = new GameObject[nodes.Length];
-    for (int i = 0; i < nodes.Length; i++) {
-      quads[i] = createQuad(i);
+    quads = new GameObject[0];
+
+    checkQuads();
+    updatePath();
+    
+    //if no texture > no animation
+    if(tex == null){
+      enabled = false;
     }
 
+  }
+
+  void checkQuads(){
+    if(quads.Length < nodes.Length){
+      GameObject[] newQuads = new GameObject[nodes.Length];
+      //transfert old quads
+      for (int i = 0; i < quads.Length; i++) {
+        newQuads[i] = quads[i];
+      }
+      //complete with new ones
+      for (int i = 0; i < newQuads.Length; i++) {
+        if(newQuads[i] == null){
+          newQuads[i] = createQuad(i);
+        }
+      }
+
+      quads = newQuads;
+    }
+
+    //hide unused
+    for (int i = 0; i < quads.Length; i++) {
+      GameObject q = quads[i];
+      int maxQuad = (closePath) ? nodes.Length : nodes.Length-1;
+      if(i >= maxQuad)  quads[i].gameObject.SetActive(false);
+      else quads[i].gameObject.SetActive(true);
+    }
+  }
+
+  public void assignPath(Vector3[] newNodes){
+    nodes = newNodes;
+    checkQuads();
     updatePath();
   }
 
@@ -22,7 +67,10 @@ public class PathRender : MonoBehaviour {
       GameObject q = quads[i];
 
       int nextIdx = i+1;
-      if(nextIdx >= nodes.Length) nextIdx = 0;
+      if(nextIdx >= nodes.Length){
+        if(!closePath) return;
+        nextIdx = 0;
+      }
       Vector3 diff = (nodes[nextIdx] - nodes[i]);
       q.transform.position = nodes[i] + diff * 0.5f;
       q.transform.LookAt(nodes[nextIdx]);
@@ -52,15 +100,16 @@ public class PathRender : MonoBehaviour {
     obj.renderer.material = new Material(Shader.Find("Transparent/Diffuse"));
     obj.renderer.material.mainTexture = tex;
 
+    obj.gameObject.SetActive(false);
     GameObject.DestroyImmediate(obj.GetComponent<MeshCollider>());
 
+    //Debug.Log("create node "+id);
     return obj;
   }
 
   void Update () {
-
-    updatePath();
-
+    
+    //update scrolling animation
     for (int i = 0; i < quads.Length; i++) {
       Vector2 offset = quads[i].renderer.material.GetTextureOffset("_MainTex");
       offset.x -= Time.deltaTime * 1f;
