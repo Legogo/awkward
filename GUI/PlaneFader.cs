@@ -37,7 +37,7 @@ public class PlaneFader : MonoBehaviour {
     if(plane == null){
       plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
       plane.name = "fadePlane";
-      plane.renderer.material = new Material(Shader.Find("Transparent/Diffuse"));
+      plane.renderer.material = new Material(Shader.Find("Unlit/TransparentColor"));
       plane.renderer.material.color = startColor;
       plane.transform.Rotate(-Vector3.right * 90f);
       plane.transform.localScale = Vector3.one * 20f;
