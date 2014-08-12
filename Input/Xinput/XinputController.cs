@@ -3,7 +3,8 @@ using System.Collections;
 using XInputDotNetPure;
 
 /*
- * http://speps.fr/xinputdotnet
+ * More information at
+ * https://github.com/speps/XInputDotNet
  * */
 
 public class XinputController : Controller360 {
