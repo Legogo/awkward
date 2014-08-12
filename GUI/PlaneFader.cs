@@ -44,6 +44,8 @@ public class PlaneFader : MonoBehaviour {
       plane.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y ,cam.transform.position.z + 5f);
       plane.renderer.enabled = false;
       plane.layer = cam.gameObject.layer;
+
+      GameObject.DestroyImmediate(plane.GetComponent<MeshCollider>());
     }
   }
 
