@@ -42,9 +42,12 @@ public class PlaneFader : MonoBehaviour {
       plane.transform.Rotate(-Vector3.right * 90f);
       plane.transform.localScale = Vector3.one * 20f;
       plane.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y ,cam.transform.position.z + 5f);
+      plane.renderer.enabled = false;
       plane.layer = cam.gameObject.layer;
     }
-    
+  }
+
+  void Start(){
     if(startFadedIn)  setAlpha(1f);
     else setAlpha(0f);
 
