@@ -59,6 +59,10 @@ public class MouseCrosshair : MonoBehaviour {
     //Debug.Log (cursorInfo);
 	}
 	
+  public void kill(){
+    enabled = false;
+  }
+
 	void OnGUI(){
     if(!show)	return;
     GUI.DrawTexture(cursorInfo,states[cursorState]);

@@ -112,6 +112,10 @@ public class PlaneFader : MonoBehaviour {
 
   float getAlpha(){ return plane.renderer.material.color.a; }
 
+  public void fadeIn(float speed, Color col){
+    fadeIn(speed, col, null);
+  }
+
   public void fadeIn(float speed, Color col, delegateCallBack cb){
     speedIn = speed;
 
