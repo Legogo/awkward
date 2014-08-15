@@ -26,12 +26,13 @@ public class FollowPathEditor : Editor {
     if (GUI.changed)  EditorUtility.SetDirty (target);
   }
 
+  /* function doesn't work if object is in hierarchy */
   void drawHandle(){
     FollowPath obj = (FollowPath)target;
     if(obj.path == null)  return; // do nothing if no path
 
     for(int i = 0; i < obj.path.Length; i++){
-      obj.path[i] = Handles.PositionHandle(obj.path[i], Quaternion.identity);
+      obj.path[i] = Handles.PositionHandle(obj.getNodePosition(i), Quaternion.identity) - obj.transform.position;
       //obj.path[i] = EditorGUILayout.Vector3Field ("node#"+i, obj.path[i]);
     }
 
@@ -40,18 +41,12 @@ public class FollowPathEditor : Editor {
   Transform getAgent(){
     FollowPath obj = (FollowPath)target;
     Transform agent = obj.agent;
-    if(agent == null) agent = obj.transform;
-    if(obj.path == null)  return null; // do nothing if no path
-
     return agent;
   }
 
   void setObjectOnAverage(){
-    FollowPath obj = (FollowPath)target;
     Transform agent = getAgent();
-
-    agent.transform.position = getPathAverage();
-    obj.transform.position = getPathAverage();
+    if(agent != null) agent.transform.position = getPathAverage();
   }
 
   Vector3 getPathAverage(){
@@ -60,11 +55,14 @@ public class FollowPathEditor : Editor {
     
     //mettre l'objet au centre des points
     Vector3 average = Vector3.zero;
-    foreach(Vector3 pt in obj.path){
+    if(obj.path.Length < 1) return Vector3.zero;
+    for (int i = 0; i < obj.path.Length; i++) {
+      Vector3 pt = obj.getNodePosition(i);
       average.x += pt.x;
       average.y += pt.y;
       average.z += pt.z;
     }
+    
     average.x /= obj.path.Length;
     average.y /= obj.path.Length;
     average.z /= obj.path.Length;

@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Follow path.
+/// Vector3 position for path are localPositions (relative to transform of carrier)
+/// </summary>
+
 public class FollowPath : MonoBehaviour {
   
   public Vector3[] path;
@@ -30,7 +35,7 @@ public class FollowPath : MonoBehaviour {
   
   protected void updatePosition(){
 
-    agent.transform.position = Vector3.MoveTowards(agent.transform.position, path[getNextIndex()], speed * Time.deltaTime);
+    agent.transform.position = Vector3.MoveTowards(agent.transform.position, getNodePosition(getNextIndex()), speed * Time.deltaTime);
     if(nearNode()){
       //Debug.Log("NEAR NODE");
       if(dir > 0f)  nextNode();
@@ -39,7 +44,7 @@ public class FollowPath : MonoBehaviour {
   }
   
   public bool nearNode(){
-    return Vector3.Distance(agent.transform.position, path[getNextIndex()]) < 0.01f;
+    return Vector3.Distance(agent.transform.position, transform.position + path[getNextIndex()]) < 0.01f;
   }
   
   public void switchDir(){
@@ -56,7 +61,7 @@ public class FollowPath : MonoBehaviour {
   
   protected void setOnPath(int index){
     currentIndex = index;
-    agent.transform.position = path[currentIndex];
+    agent.transform.position = transform.position + path[currentIndex];
     if(lookAtNextPosition){
       Vector3 pos = getNextNodePosition();
       agent.transform.LookAt(pos);
@@ -76,7 +81,10 @@ public class FollowPath : MonoBehaviour {
     //Debug.Log("New index = "+newIndex);
   }
   protected Vector3 getNextNodePosition(){
-    return path[getNextIndex()];
+    return transform.position + path[getNextIndex()];
+  }
+  public Vector3 getNodePosition(int idx){
+    return transform.position + path[idx];
   }
   protected int getNextIndex(){
     if(dir > 0) return (currentIndex + 1 >= path.Length) ? 0 : (currentIndex + 1);
@@ -91,16 +99,19 @@ public class FollowPath : MonoBehaviour {
     Gizmos.DrawCube(path[0], Vector3.one);
     
     Gizmos.color = Color.red;
-    Vector3 prev = path[0];
+    Vector3 prev = getNodePosition(0);
     for(int i = 1; i < path.Length; i++){
-      Gizmos.DrawLine(prev, path[i]);
-      prev = path[i];
+      Gizmos.DrawLine(prev, getNodePosition(i));
+      Gizmos.DrawSphere(getNodePosition(i), 0.1f);
+      prev = getNodePosition(i);
     }
-    Gizmos.DrawLine(prev, path[0]);
-    
-    Gizmos.color = Color.magenta;
+
+    //close path
+    Gizmos.DrawLine(prev, getNodePosition(0));
+    Gizmos.DrawSphere(getNodePosition(0), 0.1f);
+
+    //Gizmos.color = Color.magenta;
     //Gizmos.DrawSphere(path[getNextIndex()], 0.2f);
-    
   }
   
   public bool DEBUG_DRAW = false;
