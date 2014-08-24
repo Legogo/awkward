@@ -70,7 +70,7 @@ public class GuiObject : MonoBehaviour {
 		updateFade();
 		
 		if(translateState){
-			transform.localPosition = Vector3.MoveTowards(transform.localPosition, camPosition, 1f * Time.deltaTime);
+      transform.localPosition = Vector3.MoveTowards(transform.localPosition, camPosition, 1f * GameTime.deltaTime);
 			
 			if(Vector3.Distance(transform.localPosition, camPosition) < 1f){
 				transform.localPosition = camPosition;
@@ -85,7 +85,7 @@ public class GuiObject : MonoBehaviour {
 	void updateShowTimer(){
 		
 		if(eventTimer > 0){
-			eventTimer -= Time.deltaTime;
+      eventTimer -= GameTime.deltaTime;
 			
 			//event end
 			if(eventTimer <= 0){
@@ -112,7 +112,7 @@ public class GuiObject : MonoBehaviour {
 		}
 		
 		float current = getAlpha();
-		current += fadeSpeed * Time.deltaTime;
+    current += fadeSpeed * GameTime.deltaTime;
 		
 		current = Mathf.Max(0, current);
 		current = Mathf.Min(current, 1);

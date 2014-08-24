@@ -94,7 +94,7 @@ public class Chrono : MonoBehaviour {
 	void Update(){
 		//totalFrames = Time.timeSinceLevelLoad
 		if(state == PLAY){
-			totalFrames += Time.deltaTime;
+      totalFrames += Time.deltaTime;
 			currentCount = frameToTime(totalFrames,et);
 			//print("system : "+Time.timeSinceLevelLoad);
 			//print("local : "+ totalFrames);

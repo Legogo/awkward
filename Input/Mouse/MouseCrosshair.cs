@@ -17,22 +17,31 @@ public class MouseCrosshair : MonoBehaviour {
 	
 	Rect cursorInfo;
 	
+  Texture2D reference;
 	public Texture2D[] states;
   public bool DEBUG_SHOW = false;
   bool show = true;
 
 	void Awake(){
 
-		if(states.Length <= 0){
-			states = new Texture2D[2];
-			states[0] = (Texture2D)Resources.Load("Textures/GUI/cursor_normal");
-			states[1] = (Texture2D)Resources.Load("Textures/GUI/cursor_action");
-		}
-		
-    cursorSizeX = states[0].width;
-    cursorSizeY = states[0].height;
+    if(states.Length > 0){
+      getReference();
+      cursorSizeX = reference.width;
+      cursorSizeY = reference.height;
+    }
 
     cursorInfo = new Rect(0f,0f,cursorSizeX,cursorSizeY);
+  }
+
+  //because first cell of array might be empty
+  Texture2D getReference(){
+    for (int i = 0; i < states.Length; i++) {
+      if(states[i] != null){
+        reference = states[i];
+        return reference;
+      }
+    }
+    return null;
   }
 
   void Start(){
@@ -65,9 +74,16 @@ public class MouseCrosshair : MonoBehaviour {
 
 	void OnGUI(){
     if(!show)	return;
-    GUI.DrawTexture(cursorInfo,states[cursorState]);
+
+    //can't draw cursor if array of texture doesn't have enought textures
+    if(states.Length < cursorState) return;
+    if(states[cursorState] != null){
+      GUI.DrawTexture(cursorInfo,states[cursorState]);
+    }
+
     if(!DEBUG_SHOW)  return;
     string content = "cursor state:"+cursorState;
+    content += (cursorState < states.Length) ? "\ncursor state texture ? "+states[cursorState] : "\nnot enought texture for that state !";
 
     content += "\ncamera size("+Camera.main.pixelWidth+","+Camera.main.pixelHeight+")";
     content += "\ncursor position:"+cursorInfo.x+","+cursorInfo.y;
@@ -75,4 +91,8 @@ public class MouseCrosshair : MonoBehaviour {
 
     GUI.Label(new Rect(0,0,200,100), content);
 	}
+
+  static public void setState(int newState){
+    cursorState = newState;
+  }
 }

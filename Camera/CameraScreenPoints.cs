@@ -13,7 +13,8 @@ public class CameraScreenPoints : MonoBehaviour {
 
   public bool scaleScreen = false;
 
-  void Start(){
+  void Awake(){
+    manager = this;
     updateCamera();
   }
 
@@ -65,4 +66,7 @@ public class CameraScreenPoints : MonoBehaviour {
   }
   
   public Rect getBounds(){ return bounds; }
+
+  static public CameraScreenPoints manager;
+  static public CameraScreenPoints get(){ manager.updateCamera();return manager; }
 }

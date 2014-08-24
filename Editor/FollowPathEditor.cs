@@ -10,7 +10,8 @@ public class FollowPathEditor : Editor {
     DrawDefaultInspector();
 
     if(Application.isPlaying) return;
-    setObjectOnAverage();
+    //setObjectOnAverage();
+    setObjectOnCenter();
   }
   
   void OnSceneGUI(){
@@ -44,6 +45,11 @@ public class FollowPathEditor : Editor {
     return agent;
   }
 
+  void setObjectOnCenter(){
+    FollowPath obj = (FollowPath)target;
+    getAgent().transform.position = obj.transform.position;
+  }
+
   void setObjectOnAverage(){
     Transform agent = getAgent();
     if(agent != null) agent.transform.position = getPathAverage();
@@ -66,7 +72,7 @@ public class FollowPathEditor : Editor {
     average.x /= obj.path.Length;
     average.y /= obj.path.Length;
     average.z /= obj.path.Length;
-
+    
     return average;
   }
 }

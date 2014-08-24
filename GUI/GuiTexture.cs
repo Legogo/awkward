@@ -45,14 +45,14 @@ public class GuiTexture : MonoBehaviour {
 		
 		draw = true;
 		if(cantBeRemoved > 0){
-			cantBeRemoved -= Time.deltaTime;
+      cantBeRemoved -= GameTime.deltaTime;
 			return;
 		}
 		
 		if(USE_DRAW_DISTANCE)	draw = nearStart();
 		
 		if(draw && USE_DRAW_TIMER){
-			timer += Time.deltaTime;
+      timer += GameTime.deltaTime;
 			draw = (timer > drawTime);
 		}
 		

@@ -108,7 +108,7 @@ public class PathRender : MonoBehaviour {
     if(tex != null){
       for (int i = 0; i < quads.Length; i++) {
         Vector2 offset = quads[i].renderer.material.GetTextureOffset("_MainTex");
-        offset.x -= Time.deltaTime * 1f;
+        offset.x -= GameTime.deltaTime * 1f;
         quads[i].renderer.material.SetTextureOffset("_MainTex", offset);
       }
     }

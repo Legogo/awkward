@@ -41,10 +41,10 @@ public class Migration : MonoBehaviour {
 	
 	void Update () {
 		if(!atDestination){
-			transform.position = Vector3.MoveTowards(transform.position, destination, speed * Time.deltaTime);
+      transform.position = Vector3.MoveTowards(transform.position, destination, speed * GameTime.deltaTime);
 			if(isAtDestination()) atDestinationEvent();
 		}else{
-			deathMigrationTimer -= Time.deltaTime;
+      deathMigrationTimer -= GameTime.deltaTime;
 			if(deathMigrationTimer <= 0f){
 				Debug.Log("Migration killed "+name);
 				GameObject.Destroy(gameObject);
@@ -58,6 +58,6 @@ public class Migration : MonoBehaviour {
 	}
 	
 	bool isAtDestination(){
-		return Vector3.Distance(transform.position, destination) < (speed * Time.deltaTime);
+    return Vector3.Distance(transform.position, destination) < (speed * GameTime.deltaTime);
 	}
 }
