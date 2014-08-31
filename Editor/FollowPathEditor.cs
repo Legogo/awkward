@@ -47,7 +47,10 @@ public class FollowPathEditor : Editor {
 
   void setObjectOnCenter(){
     FollowPath obj = (FollowPath)target;
-    getAgent().transform.position = obj.transform.position;
+    if(obj == null) return;
+    Transform a = getAgent();
+    if(a == null) return;
+    a.transform.position = obj.transform.position;
   }
 
   void setObjectOnAverage(){
