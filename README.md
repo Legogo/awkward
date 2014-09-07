@@ -7,7 +7,8 @@ Current version is 1.1
 Updates
 =======
 
-# 2014-09-07
+2014-09-07
+
  # add Romain's MathfLib tools. Various useful math tools to compare geometry positions and rotations.
 
 Download
