@@ -14,6 +14,7 @@ using System.Collections;
 
 public class VideoPlayer : MonoBehaviour {
 
+  public bool loop = false;
   public MovieTexture movie;
 
   void Start () {
@@ -31,6 +32,7 @@ public class VideoPlayer : MonoBehaviour {
 
     mat.mainTexture = movie;
 
+    src.loop = loop;
     src.clip = movie.audioClip;
 
     src.Play ();
