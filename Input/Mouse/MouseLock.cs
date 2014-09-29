@@ -30,4 +30,11 @@ public class MouseLock : MonoBehaviour {
 		Screen.lockCursor = !flag;
 		//Screen.showCursor = flag;
 	}
+
+  static public void lockCursor(){
+    Screen.lockCursor = true;
+  }
+  static public void unlockCursor(){
+    Screen.lockCursor = false;
+  }
 }

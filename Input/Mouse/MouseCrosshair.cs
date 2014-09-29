@@ -18,6 +18,7 @@ public class MouseCrosshair : MonoBehaviour {
 	Rect cursorInfo;
 	
   Texture2D reference;
+  public bool followMouse = true;
 	public Texture2D[] states;
   public bool DEBUG_SHOW = false;
   bool show = true;
@@ -56,15 +57,25 @@ public class MouseCrosshair : MonoBehaviour {
 	void Update(){
 		//state will be changed by other scripts
 		cursorState = NORMAL;
-		
+	  
+    if(followMouse){
+      cursorInfo.x = Input.mousePosition.x;
+      cursorInfo.y = Camera.main.pixelHeight - Input.mousePosition.y;
+    }
+
 		event__resizeScreen();
 	}
 	
 	public void event__resizeScreen(){
     int w = (Mathf.CeilToInt (Camera.main.pixelWidth * 0.5f) - Mathf.CeilToInt(cursorSizeX * 0.5f));
     int h = (Mathf.CeilToInt (Camera.main.pixelHeight * 0.5f) - Mathf.CeilToInt(cursorSizeY * 0.5f));
-    cursorInfo.x = w;
-    cursorInfo.y = h;
+
+    //center of screen
+    if(!followMouse){
+      cursorInfo.x = w;
+      cursorInfo.y = h;
+    }
+
     //Debug.Log (cursorInfo);
 	}
 	
@@ -89,7 +100,7 @@ public class MouseCrosshair : MonoBehaviour {
     content += "\ncursor position:"+cursorInfo.x+","+cursorInfo.y;
     content += "\ncursor size:"+cursorInfo.width+","+cursorInfo.height;
 
-    GUI.Label(new Rect(0,0,200,100), content);
+    GUI.TextField(new Rect(0,0,400,150), content);
 	}
 
   static public void setState(int newState){
