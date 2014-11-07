@@ -53,7 +53,12 @@ public class Looking : MonoBehaviour {
   }
 
 	void Update() {
-		if(!Screen.lockCursor)	return;
+		if(!Screen.lockCursor){
+      if(Input.GetMouseButtonDown(0)){
+        Screen.lockCursor = true;
+      }
+      return;
+    }
 		
 		// --- Mouse looking around
 		float xvalue = Input.GetAxis("Mouse X");
