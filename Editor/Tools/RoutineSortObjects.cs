@@ -5,48 +5,36 @@ using System.Collections.Generic;
 
 public class RoutineSortObjects : EditorWindow {
   
-  [MenuItem ("Tools/Nodes tools")]
+  [MenuItem ("Tools/Sort objects %#w")]
   static void init(){
-    EditorWindow.GetWindow(typeof(ApplyPrefabRoutine));
+    GameObject s = Selection.activeGameObject;
+
+    if(s == null) return;
+
+    //Debug.Log(s.transform.childCount+" objects to sort");
+    order(s.transform);
   }
-  
-  void OnEnabled(){
-    // called on window creation
-  }
-  
-  void OnGUI(){
-    /*
-    GUILayout.Label("label");
-    EditorGUILayout.LabelField("label left", "label right");
-    EditorGUILayout.Separator();
-    EditorGUILayout.ObjectField("Title", objectHandle, typeof(objectClassName), true);
-    */
-    if (GUILayout.Button("Re-order nodes")){
-      reorder();
+
+  static void order(Transform t){
+
+    List<Transform> children = new List<Transform>();
+
+    foreach(Transform child in t){ children.Add(child); }
+    for (int i = 0; i < children.Count; i++) {
+      children[i].parent = null;
     }
-  }
-  
-  void reorder(){
-    GameObject select = Selection.activeGameObject;
-    if(select == null)  return;
-    
-    if(select.name.IndexOf("_path") > -1){
-      List<Transform> children = new List<Transform>();
-      
-      for (int i = 1; i < 50; i++) {
-        foreach(Transform c in select.transform){
-          if(c.name.IndexOf("_"+i) > -1){
-            children.Add(c);
-          }
-        }
-      }
-      
-      for (int i = 0; i < children.Count; i++) {
-        children[i].transform.parent = null;
-        children[i].transform.parent = select.transform;
-      }
-      //Debug.Log(children.Count);
-      //children.ToArray().orOrder();
+
+    children.Sort(CompareListByName);
+
+    for (int i = 0; i < children.Count; i++) {
+      children[i].parent = t;
     }
+
+    //Debug.Log("Sorted "+children.Count+" objects");
+  }
+
+  private static int CompareListByName(Transform i1, Transform i2)
+  {
+    return i1.name.CompareTo(i2.name); 
   }
 }
