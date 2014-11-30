@@ -5,26 +5,36 @@ public class VersionManager : MonoBehaviour {
 	
   string website = ""; // when you click on version this website open
 
-  string webVersion = "";
-  string localVersion = "";
-	public TextMesh version; // set in editor
+  public Font font;
+  public float fontSize = 1f;
 
-  float fadeSpeed = 1.2f;
+  public string version = "";
+	TextMesh txt;
+
+  float waitOnScreenTime = 2f;
+  float fadeSpeed = 3f;
 
   void Awake(){
     DontDestroyOnLoad(gameObject);
     manager = this;
+
+    txt = gameObject.AddComponent<TextMesh>();
+    //gameObject.AddComponent<MeshRenderer>();
   }
 
   void Start(){
-    localVersion = version.text;
-    setAlpha(0f);
+
+    txt.font = font;
+    txt.characterSize = fontSize;
+    updateText();
+
+    startFading();
   }
 
   void startFading(){
     updateText();
 
-    if(version.text.Length > 0){
+    if(txt.text.Length > 0){
       StartCoroutine("fadeProcess");
     }
   }
@@ -33,14 +43,14 @@ public class VersionManager : MonoBehaviour {
     setAlpha(0f);
 
     while(renderer.material.color.a < 1f){
-      setAlpha(renderer.material.color.a + (Time.deltaTime / fadeSpeed));
+      setAlpha(renderer.material.color.a + (Time.deltaTime * fadeSpeed));
       yield return null;
     }
 
-    yield return new WaitForSeconds(3f);
+    yield return new WaitForSeconds(waitOnScreenTime);
 
     while(renderer.material.color.a > 0f){
-      setAlpha(renderer.material.color.a - (Time.deltaTime / fadeSpeed));
+      setAlpha(renderer.material.color.a - (Time.deltaTime * fadeSpeed));
       yield return null;
     }
   }
@@ -57,13 +67,14 @@ public class VersionManager : MonoBehaviour {
   }
   
   void updateText(){
-    version.text = localVersion;
+    txt.text = version;
   }
 
-  void toggleVersion(){
+  public void toggleVersion(){
     StopCoroutine("fetchVersion");
     StopCoroutine("fadeProcess");
-    checkVersion();
+
+    startFading();
   }
 
 	void Update(){
@@ -75,7 +86,7 @@ public class VersionManager : MonoBehaviour {
 	}
 
   void checkClick(){
-    if(version.renderer.material.color.a <= 0f) return;
+    if(txt.renderer.material.color.a <= 0f) return;
 
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
