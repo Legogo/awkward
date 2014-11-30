@@ -18,16 +18,19 @@ public class VersionManager : MonoBehaviour {
     DontDestroyOnLoad(gameObject);
     manager = this;
 
-    txt = gameObject.AddComponent<TextMesh>();
-    //gameObject.AddComponent<MeshRenderer>();
   }
 
   void Start(){
-
+    StartCoroutine(createMesh());
+  }
+  
+  IEnumerator createMesh(){
+    txt = gameObject.AddComponent<TextMesh>();
+    yield return new WaitForSeconds(0.1f);
     txt.font = font;
     txt.characterSize = fontSize;
     updateText();
-
+    yield return new WaitForSeconds(0.1f);
     startFading();
   }
 
@@ -78,7 +81,7 @@ public class VersionManager : MonoBehaviour {
   }
 
 	void Update(){
-		if(Input.GetKeyUp(KeyCode.V)){
+		if(Input.GetKeyUp(KeyCode.Equals)){
       toggleVersion();
 		}
 
