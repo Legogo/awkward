@@ -16,24 +16,22 @@ using System.Collections.Generic;
  * # added stopSound(name)
  * */
 
-public class SoundManager : MonoBehaviour {
+public class SoundManager {
 	
-	static public int CHANNEL_QTY = 2;
-	
-	static public List<AudioClip> clips = new List<AudioClip>();
+  static public List<AudioClip> clips;
 	
 	static private GameObject snd;
 	
 	static public void init() {
 		
-		snd = new GameObject("sound");
-		
-		for(int i = 0; i < CHANNEL_QTY; i++){
-			addSource();
-		}
+    snd = GameObject.Find("[SOUND]");
+    if(snd == null){
+      snd = new GameObject("[SOUND]");
+    }
 		
 		Object[] allSound = Resources.LoadAll("Sound");
 		
+    clips = new List<AudioClip>();
 		//declare all clips
 		for(int i = 0; i < allSound.Length; i++){
 			clips.Add((AudioClip)(allSound[i]));
@@ -44,12 +42,16 @@ public class SoundManager : MonoBehaviour {
 	}
 	
 	static public void printContent(){
+    if(!isReady()) SoundManager.init();
+
 		foreach(AudioClip clip in clips){
 			Debug.Log(clip.name);
 		}
 	}
 	
 	static public int getSoundId(string name){
+    if(!isReady()) SoundManager.init();
+
 		for(int i = 0; i < clips.Count; i++){
 			if(name == clips[i].name){
 				return i;
@@ -69,25 +71,23 @@ public class SoundManager : MonoBehaviour {
 	}
 	
 	static public AudioSource playSound(int id, bool loop){
-		if(snd == null){
-			Debug.Log("SoundManager has not started yet");
-			return null;
-		}
+    if(!isReady()) SoundManager.init();
 		
 		AudioSource src = getAvailable();
 		
-		if(id > clips.Count){
+		if(id >= clips.Count){
 			Debug.LogError("Id is too high for sounds clips array");
 			return null;
 		}
 		
-		if(id >= clips.Count){
+		if(clips[id] == null){
 			Debug.LogError("No sound clip ref for id "+id);
 			return null;
 		}
 		
 		if(src == null){
 			Debug.LogError("No audio source ?");
+      return null;
 		}
 		
 		src.clip = clips[id];
@@ -99,6 +99,8 @@ public class SoundManager : MonoBehaviour {
 	}
 	
 	static public void stopSound(string name){
+    if(!isReady()) SoundManager.init();
+
 		foreach(AudioSource src in snd.transform.GetComponents<AudioSource>()){
 			if(src.clip != null){
 				if(src.clip.name == name){
@@ -109,6 +111,8 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 	
+  static public bool isReady(){ return snd != null; }
+
 	static public AudioSource addSource(){
 		return snd.AddComponent<AudioSource>();
 	}
