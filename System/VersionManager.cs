@@ -45,23 +45,23 @@ public class VersionManager : MonoBehaviour {
   IEnumerator fadeProcess(){
     setAlpha(0f);
 
-    while(renderer.material.color.a < 1f){
-      setAlpha(renderer.material.color.a + (Time.deltaTime * fadeSpeed));
+    while(renderer.sharedMaterial.color.a < 1f){
+      setAlpha(renderer.sharedMaterial.color.a + (Time.deltaTime * fadeSpeed));
       yield return null;
     }
 
     yield return new WaitForSeconds(waitOnScreenTime);
 
-    while(renderer.material.color.a > 0f){
-      setAlpha(renderer.material.color.a - (Time.deltaTime * fadeSpeed));
+    while(renderer.sharedMaterial.color.a > 0f){
+      setAlpha(renderer.sharedMaterial.color.a - (Time.deltaTime * fadeSpeed));
       yield return null;
     }
   }
 
   void setAlpha(float alpha){
-    Color col = renderer.material.color;
+    Color col = renderer.sharedMaterial.color;
     col.a = alpha;
-    renderer.material.color = col;
+    renderer.sharedMaterial.color = col;
   }
 
   int convertVersion(string v){
