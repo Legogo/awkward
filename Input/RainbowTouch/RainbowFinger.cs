@@ -17,7 +17,7 @@ public class RainbowFinger {
 	
 	public Vector3 startPosition = Vector3.zero;
 	
-  public bool DEBUG = true;
+  public bool DEBUG = false;
 	RainbowFingerAsset asset;
 	
 	public RainbowFinger(){
@@ -60,7 +60,7 @@ public class RainbowFinger {
 	public Vector3 getWorldPosition(){
     position.z = Camera.main.nearClipPlane;
 		Vector3 worldPos = Camera.main.ScreenToWorldPoint(position);
-    Debug.Log(position+","+worldPos);
+    //Debug.Log(position+","+worldPos);
 
 		worldPos.z = 0f;
 		return worldPos;

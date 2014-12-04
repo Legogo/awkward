@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 /// <summary>
@@ -8,28 +8,27 @@ using System.Collections;
 /// </summary>
 
 public class GuiCameraAlign : MonoBehaviour {
-	
-	public Camera guiCamera;
-	public Vector2 topLeft; // manage depth with Z
-	
-	void Start () {
-    if(guiCamera == null){
-      guiCamera = Camera.main;
-    }
-		
-		resizeEvent();
-	}
-	
-	public void resizeEvent(){
-		Vector2 screen = Vector2.zero;
-		screen.x = Screen.width * topLeft.x;
-		screen.y = Screen.height * topLeft.y;
-		
-		screen = guiCamera.ScreenToWorldPoint(screen);
-		
+  
+  public Camera guiCamera;
+  public Vector2 topLeft; // manage depth with Z
+
+  public void resizeEvent(){
+    Vector2 screen = Vector2.zero;
+    screen.x = guiCamera.pixelWidth * topLeft.x;
+    screen.y = guiCamera.pixelHeight * topLeft.y;
+    
+    screen = guiCamera.ScreenToWorldPoint(screen);
+    
     Vector3 result = screen;
     result.z = transform.position.z;
+    
+    transform.position = result;
+  }
 
-		transform.position = result;
-	}
+  #if UNITY_EDITOR
+  void OnDrawGizmos(){
+    if(guiCamera == null) guiCamera = Camera.main;
+    resizeEvent();
+  }
+  #endif
 }

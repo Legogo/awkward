@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GraphicTools : MonoBehaviour {
+public class GraphicTools {
   
   static public float setAlpha(Material m, float alpha){
     if(m == null) return alpha;
@@ -13,5 +13,5 @@ public class GraphicTools : MonoBehaviour {
     return alpha;
     //Debug.Log(m.name+","+m.color.a);
   }
-
+  
 }
