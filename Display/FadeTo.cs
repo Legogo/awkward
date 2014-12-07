@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ColorTo : MonoBehaviour {
+public class FadeTo : MonoBehaviour {
 
   TextMesh txt;
   Material mat;
 
-  Color c_start = Color.white;
-  Color c_end = Color.white;
+  float start = 0f;
+  float end = 0f;
 
   float timeTarget = 0f;
   float progress = 0f;
+
+  Color c;
 
 	void Awake(){
     txt = gameObject.GetComponent<TextMesh>();
@@ -29,9 +31,17 @@ public class ColorTo : MonoBehaviour {
   }
 
   void update_display(){
-    Color c = Color.Lerp(c_start, c_end, Mathf.Lerp(0f,1f,Mathf.InverseLerp(0f, timeTarget, progress)));
-    if(txt != null) txt.color = c;
-    if(mat != null) mat.color = c;
+    float result = Mathf.Lerp(start, end, Mathf.Lerp(0f,1f,Mathf.InverseLerp(0f, timeTarget, progress)));
+    if(txt != null){
+      c = txt.color;
+      c.a = result;
+      txt.color = c;
+    }
+    if(mat != null){
+      c = mat.color;
+      c.a = result;
+      mat.color = c;
+    }
   }
 
   bool isDone(){
@@ -46,25 +56,25 @@ public class ColorTo : MonoBehaviour {
     GameObject.DestroyImmediate(this);
   }
 
-  public void call(Material targetMat, Color from, Color to, float time){
+  public void call(Material targetMat, float from, float to, float time){
     mat = targetMat;
     call (from, to, time);
   }
-  public void call(Color from, Color to, float time){
-    c_start = from;
-    c_end = to;
+  public void call(float from, float to, float time){
+    start = from;
+    end = to;
     timeTarget = time;
     enabled = true;
   }
 
 
-  static public ColorTo call(GameObject obj, Color from, Color to, float time){
-    ColorTo tmp = obj.AddComponent<ColorTo>();
+  static public FadeTo call(GameObject obj, float from, float to, float time){
+    FadeTo tmp = obj.AddComponent<FadeTo>();
     tmp.call(from, to, time);
     return tmp;
   }
-  static public ColorTo call(GameObject obj, Material mat, Color from, Color to, float time){
-    ColorTo tmp = obj.AddComponent<ColorTo>();
+  static public FadeTo call(GameObject obj, Material mat, float from, float to, float time){
+    FadeTo tmp = obj.AddComponent<FadeTo>();
     tmp.call(mat, from, to, time);
     return tmp;
   }
