@@ -7,8 +7,18 @@ public class NonUniformRandom {
   // we approximate the distribution with samples
   private static float[] distribSamples;
   // how much samples do we take
-	private static int distribSampleDensity = 30;
+	public static int distribSampleDensity = 30;
 	private static float distribSum = 0;
+  private static bool _normalizeProbabilities = true; // normalize proba curve so that sum of probabilities equals to 1
+
+  public static bool normalizeProbabilities
+  {
+    get{ return _normalizeProbabilities; }
+    set{ 
+      _normalizeProbabilities = value;
+      setDistribution(distribution);
+    }
+  }
 
 	public static void setDistribution(AnimationCurve distrib){
     distribution = distrib;
@@ -18,9 +28,13 @@ public class NonUniformRandom {
       distribSamples[i] = distribution.Evaluate((float)i/(float)distribSampleDensity);
       distribSum += distribSamples[i];
     }
-    // divide each sample by sum to get probabilities
-    for(int i=0; i<distribSampleDensity; i++){
-      distribSamples[i] /= distribSum;
+
+    if(_normalizeProbabilities)
+    {
+      // divide each sample by sum to get probabilities
+      for(int i=0; i<distribSampleDensity; i++){
+        distribSamples[i] /= distribSum;
+      }
     }
   }
 
@@ -31,27 +45,27 @@ public class NonUniformRandom {
   /// A random number according to provided distribution of probabilities to appear
   /// </returns>
   public static float getValue(){
-    // generate a random number from 0 to 1
-    float randomValue = Random.value;
-    int idx = Mathf.FloorToInt(randomValue*distribSampleDensity);
-    float probaOfAppearing = distribSamples[idx];
-    
-    // generate a value to decide wether to discard or accept the number
-    float discardValue = Random.value/distribSum;
+    float randomValue;
+    float probaOfAppearing;
+    float discardValue;
     int nbAttempts = 20;
     
     // if the accept value is below the probability of our random number to appear, accept it
-    while(discardValue > probaOfAppearing && nbAttempts > 0){
+    do{
       randomValue = Random.value;
-      discardValue = Random.value/distribSum;
-      idx = Mathf.FloorToInt(randomValue*distribSampleDensity);
+      // generate a value to decide wether to discard or accept the number
+      discardValue = Random.value;
+      if(_normalizeProbabilities) discardValue /= distribSum;
+
+      int idx = Mathf.FloorToInt(randomValue*distribSampleDensity);
       probaOfAppearing = distribSamples[idx];
-    }
+      nbAttempts--;
+    }while(discardValue > probaOfAppearing && nbAttempts > 0);
     
     return randomValue;
   }
   
-  /*void TestDistribution(int nbNumbersToGenerate){
+  public static void TestDistribution(int nbNumbersToGenerate){
     string probasDistribStr = "[";
     foreach(float proba in distribSamples) probasDistribStr += ""+proba+", ";
     probasDistribStr += "]";
@@ -69,5 +83,5 @@ public class NonUniformRandom {
     foreach(int appearanceCount in appearancedistribution) resultDistrib += ""+((float)appearanceCount/(float)nbNumbersToGenerate)+", ";
     resultDistrib += "]";
     Debug.Log("RESULT DISTRIBUTION: "+resultDistrib);
-  }*/
+  }
 }
