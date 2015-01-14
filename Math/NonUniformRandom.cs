@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Helper class to get non uniform random numbers
+// A distribution can be specified to choose
+// ranges of numbers in [0..1] with specific 
+// probabilities of being picked
 public class NonUniformRandom {
 
   public static AnimationCurve distribution = null;
