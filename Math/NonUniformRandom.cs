@@ -6,6 +6,7 @@ public class NonUniformRandom {
   public static AnimationCurve distribution = null;
   // we approximate the distribution with samples
   private static float[] distribSamples;
+  private static float maxProbaElementInDistrib;
   // how much samples do we take
 	public static int distribSampleDensity = 30;
 	private static float distribSum = 0;
@@ -24,9 +25,18 @@ public class NonUniformRandom {
     distribution = distrib;
     distribSamples = new float[distribSampleDensity];
     // compute sum of distribution
+    float maxProbaElementInDistrib = 0;
+    float maxProba = 0;
     for(int i=0; i<distribSampleDensity; i++){
       distribSamples[i] = distribution.Evaluate((float)i/(float)distribSampleDensity);
       distribSum += distribSamples[i];
+      // remember element that has max probability in the distribution
+      // as it will be returned when max iterations has been reached
+      if(distribSamples[i] > maxProba)
+      {
+        maxProba = distribSamples[i];
+        maxProbaElementInDistrib = maxProba / maxProbaElementInDistrib;
+      }
     }
 
     if(_normalizeProbabilities)
@@ -61,17 +71,13 @@ public class NonUniformRandom {
       probaOfAppearing = distribSamples[idx];
       nbAttempts--;
     }while(discardValue > probaOfAppearing && nbAttempts > 0);
-    
+
+    if(nbAttempts == 0) return maxProbaElementInDistrib;
     return randomValue;
   }
   
   public static void TestDistribution(int nbNumbersToGenerate){
-    string probasDistribStr = "[";
-    foreach(float proba in distribSamples) probasDistribStr += ""+proba+", ";
-    probasDistribStr += "]";
-    
-    Debug.Log("NonUniformGenerator > TESTING distribution: "+probasDistribStr);
-    
+
     // TEST the non uniform random generation
     int[] appearancedistribution = new int[distribSampleDensity];
     for(int i=0; i< nbNumbersToGenerate; i++){
@@ -79,9 +85,13 @@ public class NonUniformRandom {
       int index = Mathf.FloorToInt(nbGenerated*distribSampleDensity);
       appearancedistribution[index]++;
     }
-    string resultDistrib = "[";
-    foreach(int appearanceCount in appearancedistribution) resultDistrib += ""+((float)appearanceCount/(float)nbNumbersToGenerate)+", ";
+
+    string resultDistrib = "[NonUniformGenerator > distribution test\n";
+    for(int i=0; i<appearancedistribution.Length; i++)
+    {
+      resultDistrib += "("+((float)i/distribSampleDensity)+")\t\t[theoretical distrib:"+distribSamples[i]+" -> distrib in test:"+((float)appearancedistribution[i]/(float)nbNumbersToGenerate)+" (occurences:"+appearancedistribution[i]+")]\n";
+    }
     resultDistrib += "]";
-    Debug.Log("RESULT DISTRIBUTION: "+resultDistrib);
+    Debug.Log(resultDistrib);
   }
 }
