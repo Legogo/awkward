@@ -6,10 +6,17 @@ public class GameTime : MonoBehaviour {
 	public float timeScale = 1f;
   public float timeScaleDebug = 1f; // will be toggled by KeyCode.T
 	public float elapsedTime = 0f;
-  public static float deltaTime = 0f; // equivalent to Time.deltaTime;
+  private static float _deltaTime = 0f; // equivalent to Time.deltaTime;
+  public static float deltaTime
+  {
+    get{
+      if(manager == null) manager = init();
+      return _deltaTime;
+    }
+  }
 	
 	void Update () {
-		deltaTime = Time.deltaTime * timeScale;
+		_deltaTime = Time.deltaTime * timeScale;
 
 		if(Input.GetKeyDown(KeyCode.KeypadPlus)){
 			timeScale += 0.5f;
