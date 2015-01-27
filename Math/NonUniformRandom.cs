@@ -10,7 +10,7 @@ public class NonUniformRandom {
   public static AnimationCurve distribution = null;
   // we approximate the distribution with samples
   private static float[] distribSamples;
-  private static float maxProbaElementInDistrib;
+  private static float maxProbaElementInDistrib = 0;
   // how much samples do we take
 	public static int distribSampleDensity = 30;
 	private static float distribSum = 0;
@@ -29,7 +29,7 @@ public class NonUniformRandom {
     distribution = distrib;
     distribSamples = new float[distribSampleDensity];
     // compute sum of distribution
-    float maxProbaElementInDistrib = 0;
+    maxProbaElementInDistrib = 0;
     float maxProba = 0;
     for(int i=0; i<distribSampleDensity; i++){
       distribSamples[i] = distribution.Evaluate((float)i/(float)distribSampleDensity);
